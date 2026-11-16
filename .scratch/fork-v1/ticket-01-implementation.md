@@ -41,7 +41,7 @@ two reviewer agents required by the official code-review workflow at the end.
   only where behavior is missing.
 - [x] Document dependency versions, Windows installation, migration,
   run/test/reproduction commands and actual evidence in README and this record.
-- [ ] Run typecheck, build and full suite; pin a reviewable Git commit,
+- [x] Run typecheck, build and full suite; pin a reviewable Git commit,
   run official two-axis code-review, fix/refactor any findings, rerun affected
   checks, and commit the final result on `feat/fork-v1`.
 
@@ -87,3 +87,84 @@ real process restart, transaction boundaries, no later-ticket features.
   isolated `data/ticket01-cli-smoke.sqlite`, using the default test Provider.
   No real API Key was configured or needed. Windows 11 has not been tested;
   README distinguishes the Windows 10 local result from upstream support.
+- CLI smoke: GET `/` returned 200; POST `/api/conversations` with
+  `Windows CLI smoke` returned a completed root Turn, separate identities,
+  `test-provider / deterministic-echo-v1` and `测试回复：Windows CLI smoke`.
+  Closed the temporary service after verification. Reviewed the recovery
+  screenshot attached to the Playwright HTML report: content and metadata
+  are readable without clipping.
+
+## Acceptance evidence
+
+| Ticket criterion | Evidence |
+| --- | --- |
+| Windows clean startup and real migrations | Successful npm ci, db:migrate, npm start and HTTP smoke; version caveat in README |
+| Prompt, deterministic reply and Node Card | First Playwright scenario, one visible card per selected Conversation |
+| Separate Conversation/Turn identities; Turn is root | UI identity and root assertions; second New Chat has different IDs |
+| Durable content and Provider/Model | Second scenario closes browser and server process, then reads the same SQLite file through a new UI session |
+| Actual transactions/database | Drizzle migration + file-backed better-sqlite3; admission uses one real database transaction, PK/FK/check constraints in SQL |
+| Isolated UI automation without keys | Two Playwright scenarios each create a migrated test database; injected server Provider records actual messages |
+| Reproduction instructions | README: install, migrate, build, start, typecheck, test and restart demo |
+
+Implementation commit for review: `06485e7`. Fixed comparison:
+`git diff 2be4647cc7f06007328c595b5c57c87ecae37bc3...06485e7`.
+
+## Review execution
+
+The first two reviewer attempts were interrupted by account quota; they did
+not produce review findings. After the user explicitly asked to continue,
+both independent reviewers resumed and completed their assigned axis against
+the same fixed implementation diff. Their reports are preserved separately
+below. The two uncommitted acceptance/evidence documentation updates were
+checked by the implementer and are not misrepresented as independently reviewed.
+
+## Standards
+
+**0 findings.** No documented-standard violations or actionable baseline
+smells found in `2be4647...06485e7`.
+
+- Domain names follow GLOSSARY.md and docs/agents/domain.md: Conversation
+  and Turn retain separate identities; Node Card presents a Turn.
+- server/schema.ts and server/app.ts follow ADR-0001: Conversations reference
+  history through tipTurnId, Turns have parent references without a creating
+  Conversation owner, and completion updates only a generating Turn.
+- ADR-0002 is not contradicted; this ticket does not introduce Fork drafts.
+- Database migrations, runtime instructions, and isolated test databases agree
+  with the documented repository workflow.
+- The Provider boundary and database wrapper have concrete responsibilities.
+  Their abstraction is justified by runtime and integration-test use; no
+  speculative generality finding is warranted.
+
+The Standards review was read-only and ran no additional tests.
+
+## Spec
+
+**0 actionable findings within Ticket 01.**
+
+The diff implements the required first-turn path: New Chat creates a distinct
+Independent Conversation and root Turn, the server-side test Provider receives
+the submitted Prompt, and SQLite persists the Prompt, reply, identities, and
+Provider/Model metadata. Recovery tests restart the server and open a fresh
+browser session, then verify the same records through the UI.
+
+The implementation stays within “仅第一轮正常对话与必要基础。” It does not introduce
+Fork, subsequent turns, real Providers, or other later-ticket features.
+Streaming and complete error recovery remain excluded as explicitly permitted
+by Ticket 01. The reviewer examined the fixed-point diff and automated
+acceptance code; execution results were verified by the implementer.
+
+Review summary: Standards 0 findings (no worst issue); Spec 0 findings
+(no worst issue). No review-driven refactor or deferred finding was needed.
+
+## Final verification
+
+After resuming from the quota interruption on 2026-11-16:
+
+- `npm run typecheck`: passed.
+- `npm test`: Vite build passed; full Chromium suite passed 2/2 (11.8s).
+- `git diff --check`: passed; only existing Windows line-ending notices.
+- Product code remained unchanged after the reviewed implementation commit.
+  Final follow-up commit records acceptance, evidence and the two review axes.
+- Work remains on the requested `feat/fork-v1` branch. No merge, push or
+  deployment was requested or performed. Repository-recoverable information
+  is kept here instead of duplicating it in Notion, per AGENTS.md.

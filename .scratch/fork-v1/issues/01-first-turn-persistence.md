@@ -30,13 +30,13 @@ V1 唯一要求真实接入的 Provider 是 DeepSeek，优先使用实施时官�
 
 ## Acceptance criteria
 
-- [ ] 从干净环境按说明可在 Windows 启动应用，并通过迁移创建真实 SQLite 数据库；记录实际运行与兼容性核验结果。
-- [ ] 在最小界面提交一个 Prompt，能看到替身的确定性回复及对应 Node Card。
-- [ ] 一轮交流只对应一个 Turn；Independent Conversation 有独立身份，首个 Turn 是其历史树结构根。
-- [ ] Prompt、回复、Turn/Conversation 身份以及实际 Provider/Model 标识均持久化；关闭并重启应用后可读取相同数据和身份。
-- [ ] 数据库操作具有真实事务能力；应用可从迁移创建测试数据库，不以内存对象或浏览器假数据代替持久化。
-- [ ] 自动化验收通过界面、真实应用与隔离数据库完成，不配置真实 API Key也可运行。
-- [ ] 提供必要的启动、迁移、测试和复现步骤；不要求人工修改数据库才能演示首轮路径。
+- [x] 从干净环境按说明可在 Windows 启动应用，并通过迁移创建真实 SQLite 数据库；记录实际运行与兼容性核验结果。
+- [x] 在最小界面提交一个 Prompt，能看到替身的确定性回复及对应 Node Card。
+- [x] 一轮交流只对应一个 Turn；Independent Conversation 有独立身份，首个 Turn 是其历史树结构根。
+- [x] Prompt、回复、Turn/Conversation 身份以及实际 Provider/Model 标识均持久化；关闭并重启应用后可读取相同数据和身份。
+- [x] 数据库操作具有真实事务能力；应用可从迁移创建测试数据库，不以内存对象或浏览器假数据代替持久化。
+- [x] 自动化验收通过界面、真实应用与隔离数据库完成，不配置真实 API Key也可运行。
+- [x] 提供必要的启动、迁移、测试和复现步骤；不要求人工修改数据库才能演示首轮路径。
 
 ## 验证与交付
 
@@ -47,3 +47,16 @@ V1 唯一要求真实接入的 Provider 是 DeepSeek，优先使用实施时官�
 ## Out of scope
 
 仅第一轮正常对话与必要基础。不实现复杂地图、Fork、真实 Provider、账户、公开多人部署、完整 Project 管理或其他基础平台功能。
+
+## Comments
+
+2026-11-16：Ticket 01 实现位于 `feat/fork-v1`，实现提交 `06485e7`。
+验收命令、Red/Green 证据及审查记录见
+[实施记录](../ticket-01-implementation.md)，启动与复现步骤见
+[README](../../../README.md)。本机 Windows 10 x64 上干净安装、迁移、启动、
+类型检查及完整 Playwright 测试通过；最新 Playwright 的官方系统支持从
+Windows 11 起，Windows 11 本次未实测。没有接入真实模型或实施后续 Tickets。
+
+同日完成 Matt Pocock code-review 双轴独立审查：Standards 0 项问题，Spec 0 项问题。
+额度中断后恢复核验：类型检查、构建与完整 Chromium 测试集再次通过（2/2）。
+验收与审查已完成；保留现有 triage 标签映射，不另造完成状态值。
